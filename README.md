@@ -183,20 +183,6 @@ autodocs-mcp --help
 python -m autodocs_mcp --help
 ```
 
-### Building the Package
-
-To build the package for distribution:
-
-```bash
-# Install build tools
-pip install build twine
-
-# Build the package
-python -m build
-
-# This creates dist/ directory with wheel and source distribution
-```
-
 ### Testing
 
 ```bash
