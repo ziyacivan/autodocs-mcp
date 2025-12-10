@@ -1,5 +1,6 @@
 # autodocs-mcp
 
+[![PyPI version](https://badge.fury.io/py/autodocs-mcp.svg)](https://badge.fury.io/py/autodocs-mcp)
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -22,6 +23,12 @@ Generate Model Context Protocol (MCP) servers from ReadTheDocs documentation.
 
 ## Installation
 
+Install from [PyPI](https://pypi.org/project/autodocs-mcp/):
+
+```bash
+pip install autodocs-mcp
+```
+
 We recommend using [`uv`](https://github.com/astral-sh/uv) for faster and more reliable package management:
 
 ```bash
@@ -34,12 +41,6 @@ Or install from source:
 git clone https://github.com/ziyacivan/autodocs-mcp.git
 cd autodocs-mcp
 uv sync
-```
-
-Alternatively, you can use `pip`:
-
-```bash
-pip install autodocs-mcp
 ```
 
 ## Usage

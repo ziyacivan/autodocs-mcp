@@ -41,6 +41,7 @@ Repository = "https://github.com/ziyacivan/autodocs-mcp"
 Documentation = "https://github.com/ziyacivan/autodocs-mcp#readme"
 Issues = "https://github.com/ziyacivan/autodocs-mcp/issues"
 Changelog = "https://github.com/ziyacivan/autodocs-mcp/blob/master/CHANGELOG.md"
+"PyPI" = "https://pypi.org/project/autodocs-mcp/"
 
 [project.optional-dependencies]
 dev = [
