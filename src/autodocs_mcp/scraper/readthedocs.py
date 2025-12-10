@@ -6,6 +6,7 @@ from tqdm.asyncio import tqdm
 
 try:
     from curl_cffi.requests import AsyncSession
+
     HAS_CURL_CFFI = True
 except ImportError:
     HAS_CURL_CFFI = False
@@ -53,6 +54,7 @@ class ReadTheDocsScraper:
             )
             # Create a wrapper that looks like httpx.AsyncClient
             from .curl_wrapper import CurlCffiWrapper
+
             self.client = CurlCffiWrapper(self.curl_session)
         else:
             # Use regular httpx
