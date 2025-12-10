@@ -110,4 +110,3 @@ class ReadTheDocsScraper:
                 continue
 
         return results
-

@@ -61,4 +61,3 @@ def save_vscode_config(
         json.dump(config, f, indent=2)
 
     return str(config_path)
-

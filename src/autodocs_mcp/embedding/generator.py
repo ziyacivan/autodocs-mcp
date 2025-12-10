@@ -142,4 +142,3 @@ class EmbeddingGenerator:
             all_chunks.extend(embedded_chunks)
 
         return all_chunks
-
