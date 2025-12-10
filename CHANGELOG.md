@@ -14,6 +14,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI/CD workflows for testing and linting
 - Test infrastructure setup
 
+## [0.1.1] - 2025-01-XX
+
+### Fixed
+- Fixed format detection to use GET requests when HEAD fails (some servers don't support HEAD)
+- Increased timeouts from 10s to 30-60s for better reliability on slow connections
+- Improved error handling and logging throughout the scraping process
+- Enhanced generic scraper with ReadTheDocs-specific navigation selectors
+- Added fallback mechanism when format-specific scraping fails
+- Better error messages when no pages are found
+- Fixed issue where process would hang without proper error reporting
+
+### Improved
+- Better progress indicators and error messages in CLI
+- More robust format detection with HTML content analysis
+- Enhanced generic scraper to find navigation links in common ReadTheDocs locations
+- Added redirect following support throughout the codebase
+
 ## [0.1.0] - 2025-01-XX
 
 ### Added
@@ -40,4 +57,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/ziyacivan/autodocs-mcp/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/ziyacivan/autodocs-mcp/releases/tag/v0.1.0
+
+
 

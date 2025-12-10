@@ -46,7 +46,7 @@ async def scrape_generic(
         visited.add(normalized_url)
 
         try:
-            response = await client.get(normalized_url, timeout=10.0, follow_redirects=True)
+            response = await client.get(normalized_url, timeout=30.0, follow_redirects=True)
             if response.status_code != 200:
                 continue
 
@@ -73,22 +73,66 @@ async def scrape_generic(
             }
 
             # Find links for next depth
+            # ReadTheDocs specific: look for navigation links in common locations
             if depth < max_depth:
-                for link in soup.find_all("a", href=True):
-                    href = link.get("href")
-                    if not href:
-                        continue
+                # Try to find navigation areas first (ReadTheDocs specific)
+                nav_selectors = [
+                    "nav a",
+                    ".wy-menu-vertical a",
+                    ".rst-content a",
+                    ".toctree-wrapper a",
+                    "aside a",
+                    ".sidebar a",
+                    "[role='navigation'] a",
+                ]
 
-                    # Resolve relative URLs
-                    full_url = urljoin(normalized_url, href)
-                    parsed = urlparse(full_url)
+                nav_links_found = False
+                for selector in nav_selectors:
+                    nav_links = soup.select(selector)
+                    if nav_links:
+                        nav_links_found = True
+                        for link in nav_links:
+                            href = link.get("href")
+                            if not href:
+                                continue
 
-                    # Only follow same-domain links
-                    if parsed.netloc == base_domain:
-                        # Remove fragments
-                        clean_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
-                        if clean_url not in visited:
-                            queue.append((clean_url, depth + 1))
+                            # Resolve relative URLs
+                            full_url = urljoin(normalized_url, href)
+                            parsed = urlparse(full_url)
+
+                            # Only follow same-domain links
+                            if parsed.netloc == base_domain:
+                                # Remove fragments
+                                clean_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+                                if clean_url not in visited and clean_url not in [
+                                    q[0] for q in queue
+                                ]:
+                                    queue.append((clean_url, depth + 1))
+                        break
+
+                # If no navigation links found, fall back to all links
+                if not nav_links_found:
+                    for link in soup.find_all("a", href=True):
+                        href = link.get("href")
+                        if not href:
+                            continue
+
+                        # Resolve relative URLs
+                        full_url = urljoin(normalized_url, href)
+                        parsed = urlparse(full_url)
+
+                        # Only follow same-domain links
+                        if parsed.netloc == base_domain:
+                            # Remove fragments and query params
+                            clean_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+                            # Filter out common non-documentation links
+                            if any(
+                                skip in clean_url.lower()
+                                for skip in ["#", "javascript:", "mailto:", ".pdf", ".zip", ".tar"]
+                            ):
+                                continue
+                            if clean_url not in visited and clean_url not in [q[0] for q in queue]:
+                                queue.append((clean_url, depth + 1))
 
         except Exception:
             # Skip pages that fail to load

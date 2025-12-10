@@ -27,7 +27,7 @@ async def scrape_mkdocs(base_url: str, client: httpx.AsyncClient) -> List[Dict[s
     # Try sitemap.xml first
     sitemap_url = urljoin(base_url, "sitemap.xml")
     try:
-        response = await client.get(sitemap_url, timeout=10.0)
+        response = await client.get(sitemap_url, timeout=30.0, follow_redirects=True)
         if response.status_code == 200:
             try:
                 root = ET.fromstring(response.content)
@@ -57,7 +57,7 @@ async def scrape_mkdocs(base_url: str, client: httpx.AsyncClient) -> List[Dict[s
     # Fallback to HTML navigation if sitemap didn't work
     if not pages:
         try:
-            response = await client.get(base_url, timeout=10.0)
+            response = await client.get(base_url, timeout=30.0, follow_redirects=True)
             if response.status_code == 200:
                 soup = BeautifulSoup(response.content, "html.parser")
 

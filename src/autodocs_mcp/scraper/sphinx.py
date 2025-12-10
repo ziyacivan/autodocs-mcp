@@ -24,7 +24,7 @@ async def scrape_sphinx(base_url: str, client: httpx.AsyncClient) -> List[Dict[s
     # Download objects.inv
     objects_inv_url = urljoin(base_url, "objects.inv")
     try:
-        response = await client.get(objects_inv_url, timeout=10.0)
+        response = await client.get(objects_inv_url, timeout=30.0, follow_redirects=True)
         response.raise_for_status()
     except Exception as e:
         raise ValueError(f"Failed to download objects.inv: {e}")

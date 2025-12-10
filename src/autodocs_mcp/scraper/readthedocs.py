@@ -36,8 +36,9 @@ class ReadTheDocsScraper:
     async def __aenter__(self):
         """Async context manager entry."""
         self.client = httpx.AsyncClient(
-            timeout=30.0,
+            timeout=60.0,  # Increased timeout for slow connections
             limits=httpx.Limits(max_keepalive_connections=10, max_connections=20),
+            follow_redirects=True,  # Enable redirect following
         )
         return self
 
@@ -56,16 +57,38 @@ class ReadTheDocsScraper:
         if not self.client:
             raise RuntimeError("Scraper must be used as async context manager")
 
-        # Detect format
-        format_type = await detect_format(self.base_url, self.client)
+        # Detect format with retries
+        format_type = None
+        for attempt in range(self.max_retries):
+            try:
+                format_type = await detect_format(self.base_url, self.client)
+                break
+            except Exception as e:
+                if attempt == self.max_retries - 1:
+                    raise RuntimeError(
+                        f"Failed to detect format after {self.max_retries} attempts: {e}"
+                    )
+                continue
+
+        if format_type is None:
+            format_type = "generic"
 
         # Scrape based on format
-        if format_type == "sphinx":
-            pages = await scrape_sphinx(self.base_url, self.client)
-        elif format_type == "mkdocs":
-            pages = await scrape_mkdocs(self.base_url, self.client)
-        else:
-            pages = await scrape_generic(self.base_url, self.client)
+        pages = []
+        try:
+            if format_type == "sphinx":
+                pages = await scrape_sphinx(self.base_url, self.client)
+            elif format_type == "mkdocs":
+                pages = await scrape_mkdocs(self.base_url, self.client)
+            else:
+                pages = await scrape_generic(self.base_url, self.client)
+        except Exception as e:
+            # If format-specific scraping fails, try generic fallback
+            if format_type != "generic":
+                print(f"Warning: {format_type} scraping failed, trying generic fallback: {e}")
+                pages = await scrape_generic(self.base_url, self.client)
+            else:
+                raise
 
         return pages
 

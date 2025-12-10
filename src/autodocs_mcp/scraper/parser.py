@@ -18,7 +18,7 @@ async def fetch_and_parse_page(url: str, client: httpx.AsyncClient) -> Dict[str,
         Dictionary with 'url', 'title', 'content', 'metadata'
     """
     try:
-        response = await client.get(url, timeout=10.0, follow_redirects=True)
+        response = await client.get(url, timeout=30.0, follow_redirects=True)
         response.raise_for_status()
     except Exception as e:
         raise ValueError(f"Failed to fetch {url}: {e}")

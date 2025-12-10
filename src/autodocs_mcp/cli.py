@@ -130,58 +130,103 @@ async def async_main(
 
     # Step 1: Scrape documentation
     click.echo("\n📚 Step 1: Scraping documentation...")
-    async with ReadTheDocsScraper(readthedocs_url) as scraper:
-        pages = await scraper.detect_and_scrape()
-        click.echo(f"   Found {len(pages)} pages")
+    try:
+        async with ReadTheDocsScraper(readthedocs_url) as scraper:
+            click.echo("   Detecting documentation format...")
+            pages = await scraper.detect_and_scrape()
+            click.echo(f"   Found {len(pages)} pages")
 
-        if not pages:
-            click.echo("❌ Error: No pages found. Please check the URL.", err=True)
-            sys.exit(1)
+            if not pages:
+                click.echo("❌ Error: No pages found. Please check the URL.", err=True)
+                click.echo(f"   Tried URL: {readthedocs_url}", err=True)
+                click.echo("   Possible issues:", err=True)
+                click.echo("   - URL might be incorrect or inaccessible", err=True)
+                click.echo("   - Documentation might require authentication", err=True)
+                click.echo("   - Network connection issues", err=True)
+                sys.exit(1)
 
-        # Fetch content
-        click.echo("   Fetching page content...")
-        pages_with_content = await scraper.fetch_all_content(pages, progress=True)
-        click.echo(f"   Successfully fetched {len(pages_with_content)} pages")
+            # Fetch content
+            click.echo("   Fetching page content...")
+            pages_with_content = await scraper.fetch_all_content(pages, progress=True)
+            click.echo(f"   Successfully fetched {len(pages_with_content)} pages")
+
+            if not pages_with_content:
+                click.echo("❌ Error: Failed to fetch any page content.", err=True)
+                sys.exit(1)
+    except Exception as e:
+        click.echo(f"❌ Error during scraping: {e}", err=True)
+        import traceback
+
+        click.echo(traceback.format_exc(), err=True)
+        sys.exit(1)
 
     # Step 2: Generate embeddings
     click.echo("\n🔢 Step 2: Generating embeddings...")
-    generator = EmbeddingGenerator(model_name=embedding_model)
-    chunks = generator.process_pages(pages_with_content)
-    click.echo(f"   Generated {len(chunks)} chunks")
+    try:
+        generator = EmbeddingGenerator(model_name=embedding_model)
+        chunks = generator.process_pages(pages_with_content)
+        click.echo(f"   Generated {len(chunks)} chunks")
+    except Exception as e:
+        click.echo(f"❌ Error during embedding generation: {e}", err=True)
+        import traceback
+
+        click.echo(traceback.format_exc(), err=True)
+        sys.exit(1)
 
     # Step 3: Store in vector database
     click.echo("\n💾 Step 3: Storing in vector database...")
-    vector_store_path = output_path / "vector_store"
-    store = VectorStore(
-        persist_directory=str(vector_store_path),
-        collection_name="documentation",
-    )
-    store.add_chunks(chunks)
-    click.echo(f"   Stored {len(chunks)} chunks in vector store")
+    try:
+        vector_store_path = output_path / "vector_store"
+        store = VectorStore(
+            persist_directory=str(vector_store_path),
+            collection_name="documentation",
+        )
+        store.add_chunks(chunks)
+        click.echo(f"   Stored {len(chunks)} chunks in vector store")
+    except Exception as e:
+        click.echo(f"❌ Error during vector store creation: {e}", err=True)
+        import traceback
+
+        click.echo(traceback.format_exc(), err=True)
+        sys.exit(1)
 
     # Step 4: Generate MCP server
     click.echo("\n⚙️  Step 4: Generating MCP server...")
-    server_path = output_path / "mcp_server.py"
-    generate_mcp_server(
-        output_path=str(server_path),
-        vector_store_path=str(vector_store_path),
-        embedding_model=embedding_model,
-        documentation_url=readthedocs_url,
-        collection_name="documentation",
-    )
-    click.echo(f"   Generated MCP server: {server_path}")
+    try:
+        server_path = output_path / "mcp_server.py"
+        generate_mcp_server(
+            output_path=str(server_path),
+            vector_store_path=str(vector_store_path),
+            embedding_model=embedding_model,
+            documentation_url=readthedocs_url,
+            collection_name="documentation",
+        )
+        click.echo(f"   Generated MCP server: {server_path}")
+    except Exception as e:
+        click.echo(f"❌ Error during MCP server generation: {e}", err=True)
+        import traceback
+
+        click.echo(traceback.format_exc(), err=True)
+        sys.exit(1)
 
     # Step 5: Generate VSCode config
     click.echo("\n🔧 Step 5: Generating VSCode configuration...")
-    server_name = urlparse(readthedocs_url).netloc.replace(".", "-")
-    config_path = output_path / "vscode_config.json"
-    save_vscode_config(
-        config_path=str(config_path),
-        server_name=server_name,
-        server_path=str(server_path.absolute()),
-        python_path=python_path,
-    )
-    click.echo(f"   Generated VSCode config: {config_path}")
+    try:
+        server_name = urlparse(readthedocs_url).netloc.replace(".", "-")
+        config_path = output_path / "vscode_config.json"
+        save_vscode_config(
+            config_path=str(config_path),
+            server_name=server_name,
+            server_path=str(server_path.absolute()),
+            python_path=python_path,
+        )
+        click.echo(f"   Generated VSCode config: {config_path}")
+    except Exception as e:
+        click.echo(f"❌ Error during VSCode config generation: {e}", err=True)
+        import traceback
+
+        click.echo(traceback.format_exc(), err=True)
+        sys.exit(1)
 
     # Final instructions
     click.echo("\n✅ Generation complete!")
