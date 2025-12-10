@@ -55,6 +55,7 @@ Use the [feature request template](.github/ISSUE_TEMPLATE/feature_request.md) wh
 
 - Python 3.10 or higher
 - Git
+- [`uv`](https://github.com/astral-sh/uv) (recommended) or `pip`
 
 ### Setup Steps
 
@@ -64,18 +65,20 @@ Use the [feature request template](.github/ISSUE_TEMPLATE/feature_request.md) wh
    cd autodocs-mcp
    ```
 
-2. Create a virtual environment:
+2. Install dependencies using `uv` (recommended):
+   ```bash
+   # uv automatically creates and manages virtual environment
+   uv sync --extra dev
+   ```
+
+   Or using `pip`:
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. Install development dependencies:
-   ```bash
    pip install -e ".[dev]"
    ```
 
-4. Install pre-commit hooks (optional but recommended):
+3. Install pre-commit hooks (optional but recommended):
    ```bash
    pre-commit install
    ```

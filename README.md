@@ -22,8 +22,10 @@ Generate Model Context Protocol (MCP) servers from ReadTheDocs documentation.
 
 ## Installation
 
+We recommend using [`uv`](https://github.com/astral-sh/uv) for faster and more reliable package management:
+
 ```bash
-pip install autodocs-mcp
+uv pip install autodocs-mcp
 ```
 
 Or install from source:
@@ -31,7 +33,13 @@ Or install from source:
 ```bash
 git clone https://github.com/ziyacivan/autodocs-mcp.git
 cd autodocs-mcp
-pip install -e .
+uv sync
+```
+
+Alternatively, you can use `pip`:
+
+```bash
+pip install autodocs-mcp
 ```
 
 ## Usage
@@ -143,7 +151,7 @@ The generated MCP server provides:
 
 ```bash
 # Install development dependencies
-pip install -e ".[dev]"
+uv sync --extra dev
 
 # Run tests
 pytest
@@ -188,7 +196,7 @@ MIT License - see LICENSE file for details.
 
 **Issue: MCP server not working in VSCode**
 - Verify the Python path in `vscode_config.json` is correct
-- Ensure all dependencies are installed: `pip install chromadb sentence-transformers mcp`
+- Ensure all dependencies are installed: `uv pip install chromadb sentence-transformers mcp` (or `pip install chromadb sentence-transformers mcp`)
 - Check VSCode MCP extension is installed and enabled
 - Restart VSCode after configuration changes
 

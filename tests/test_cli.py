@@ -1,6 +1,5 @@
 """Tests for CLI module."""
 
-import pytest
 from click.testing import CliRunner
 from autodocs_mcp.cli import cli, find_python_executable
 

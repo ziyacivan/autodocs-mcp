@@ -55,7 +55,7 @@ def generate(
 ):
     """
     Generate an MCP server from ReadTheDocs documentation.
-    
+
     READTHEDOCS_URL: URL of the ReadTheDocs documentation (e.g., https://docs.example.com/)
     """
     # Validate URL
@@ -63,27 +63,29 @@ def generate(
     if not parsed.scheme or not parsed.netloc:
         click.echo(f"Error: Invalid URL: {readthedocs_url}", err=True)
         sys.exit(1)
-    
+
     # Normalize URL
     if not readthedocs_url.endswith("/"):
         readthedocs_url = readthedocs_url + "/"
-    
+
     # Auto-detect Python path if not specified
     if python_path is None:
         python_path = find_python_executable()
         if python_path is None:
-            click.echo("Error: Could not find Python executable. Please specify --python-path", err=True)
+            click.echo(
+                "Error: Could not find Python executable. Please specify --python-path", err=True
+            )
             sys.exit(1)
-    
+
     # Setup paths
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
-    
+
     if cache_dir is None:
         cache_dir = str(output_path / "cache")
     cache_path = Path(cache_dir)
     cache_path.mkdir(parents=True, exist_ok=True)
-    
+
     # Run async main
     asyncio.run(
         async_main(
@@ -102,16 +104,16 @@ def find_python_executable() -> str | None:
     python3_path = shutil.which("python3")
     if python3_path:
         return python3_path
-    
+
     # Fallback to python
     python_path = shutil.which("python")
     if python_path:
         return python_path
-    
+
     # Try sys.executable (current Python)
     if sys.executable:
         return sys.executable
-    
+
     return None
 
 
@@ -125,28 +127,28 @@ async def async_main(
     """Async main function."""
     click.echo(f"🚀 Starting MCP server generation for: {readthedocs_url}")
     click.echo(f"📁 Output directory: {output_path}")
-    
+
     # Step 1: Scrape documentation
     click.echo("\n📚 Step 1: Scraping documentation...")
     async with ReadTheDocsScraper(readthedocs_url) as scraper:
         pages = await scraper.detect_and_scrape()
         click.echo(f"   Found {len(pages)} pages")
-        
+
         if not pages:
             click.echo("❌ Error: No pages found. Please check the URL.", err=True)
             sys.exit(1)
-        
+
         # Fetch content
         click.echo("   Fetching page content...")
         pages_with_content = await scraper.fetch_all_content(pages, progress=True)
         click.echo(f"   Successfully fetched {len(pages_with_content)} pages")
-    
+
     # Step 2: Generate embeddings
     click.echo("\n🔢 Step 2: Generating embeddings...")
     generator = EmbeddingGenerator(model_name=embedding_model)
     chunks = generator.process_pages(pages_with_content)
     click.echo(f"   Generated {len(chunks)} chunks")
-    
+
     # Step 3: Store in vector database
     click.echo("\n💾 Step 3: Storing in vector database...")
     vector_store_path = output_path / "vector_store"
@@ -156,7 +158,7 @@ async def async_main(
     )
     store.add_chunks(chunks)
     click.echo(f"   Stored {len(chunks)} chunks in vector store")
-    
+
     # Step 4: Generate MCP server
     click.echo("\n⚙️  Step 4: Generating MCP server...")
     server_path = output_path / "mcp_server.py"
@@ -168,7 +170,7 @@ async def async_main(
         collection_name="documentation",
     )
     click.echo(f"   Generated MCP server: {server_path}")
-    
+
     # Step 5: Generate VSCode config
     click.echo("\n🔧 Step 5: Generating VSCode configuration...")
     server_name = urlparse(readthedocs_url).netloc.replace(".", "-")
@@ -180,22 +182,22 @@ async def async_main(
         python_path=python_path,
     )
     click.echo(f"   Generated VSCode config: {config_path}")
-    
+
     # Final instructions
     click.echo("\n✅ Generation complete!")
     click.echo("\n📋 Next steps:")
-    click.echo(f"   1. Add the following to your VSCode settings.json:")
+    click.echo("   1. Add the following to your VSCode settings.json:")
     with open(config_path) as f:
         config_content = f.read()
         click.echo(f"      {config_content}")
-    click.echo(f"\n   2. Or manually add:")
-    click.echo(f'      "mcp.servers": {{')
+    click.echo("\n   2. Or manually add:")
+    click.echo('      "mcp.servers": {')
     click.echo(f'        "{server_name}": {{')
     click.echo(f'          "command": "{python_path}",')
     click.echo(f'          "args": ["{server_path.absolute()}"]')
-    click.echo(f"        }}")
-    click.echo(f"      }}")
-    click.echo(f"\n   3. Restart VSCode to load the MCP server")
+    click.echo("        }")
+    click.echo("      }")
+    click.echo("\n   3. Restart VSCode to load the MCP server")
 
 
 def main():
@@ -205,4 +207,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

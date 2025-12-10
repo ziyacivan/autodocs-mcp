@@ -1,7 +1,6 @@
 """Tests for embedding module."""
 
 import pytest
-from unittest.mock import Mock, patch
 from autodocs_mcp.embedding import EmbeddingGenerator, VectorStore
 
 
@@ -14,7 +13,7 @@ def test_embedding_generator_init():
 def test_embedding_generator_process_pages():
     """Test processing pages into chunks."""
     generator = EmbeddingGenerator(model_name="all-MiniLM-L6-v2")
-    
+
     pages = [
         {
             "url": "https://docs.example.com/page1.html",
@@ -27,11 +26,13 @@ def test_embedding_generator_process_pages():
             "content": "This is test content for page 2. " * 50,
         },
     ]
-    
+
     chunks = generator.process_pages(pages)
     assert len(chunks) > 0
-    assert all("url" in chunk for chunk in chunks)
-    assert all("content" in chunk for chunk in chunks)
+    # Chunks have 'text' and 'metadata' keys, url is in metadata
+    assert all("text" in chunk for chunk in chunks)
+    assert all("metadata" in chunk for chunk in chunks)
+    assert all("url" in chunk["metadata"] for chunk in chunks)
 
 
 def test_vector_store_init(tmp_path):
@@ -49,7 +50,7 @@ def test_vector_store_add_chunks(tmp_path):
         persist_directory=str(tmp_path / "vector_store"),
         collection_name="test_collection",
     )
-    
+
     chunks = [
         {
             "url": "https://docs.example.com/page1.html",
@@ -62,7 +63,7 @@ def test_vector_store_add_chunks(tmp_path):
             "content": "Test content 2",
         },
     ]
-    
+
     # This will fail if ChromaDB is not properly set up, but structure is correct
     try:
         store.add_chunks(chunks)

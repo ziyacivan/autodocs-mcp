@@ -240,23 +240,23 @@ def generate_mcp_server(
 ) -> str:
     """
     Generate MCP server code from template.
-    
+
     Args:
         output_path: Path where to save the server file
         vector_store_path: Path to the vector store directory
         embedding_model: Name of the embedding model
         documentation_url: Original documentation URL
         collection_name: Name of the ChromaDB collection
-        
+
     Returns:
         Path to the generated server file
     """
     template = Template(MCP_SERVER_TEMPLATE)
-    
+
     # Convert paths to absolute
     vector_store_path = str(Path(vector_store_path).absolute())
     output_path = Path(output_path)
-    
+
     # Render template
     code = template.render(
         vector_store_path=vector_store_path,
@@ -264,13 +264,12 @@ def generate_mcp_server(
         documentation_url=documentation_url,
         collection_name=collection_name,
     )
-    
+
     # Write to file
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(code)
-    
+
     # Make executable
     os.chmod(output_path, 0o755)
-    
-    return str(output_path)
 
+    return str(output_path)

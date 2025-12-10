@@ -1,25 +1,27 @@
 """Format detection for ReadTheDocs documentation."""
 
 import httpx
-from typing import Optional, Literal
-from urllib.parse import urljoin, urlparse
+from typing import Literal
+from urllib.parse import urljoin
 
 
-async def detect_format(base_url: str, client: httpx.AsyncClient) -> Literal["sphinx", "mkdocs", "generic"]:
+async def detect_format(
+    base_url: str, client: httpx.AsyncClient
+) -> Literal["sphinx", "mkdocs", "generic"]:
     """
     Detect the documentation format by checking for format-specific files.
-    
+
     Args:
         base_url: Base URL of the documentation
         client: HTTP client for making requests
-        
+
     Returns:
         Detected format: 'sphinx', 'mkdocs', or 'generic'
     """
     # Normalize base URL
     if not base_url.endswith("/"):
         base_url = base_url + "/"
-    
+
     # 1. Check for objects.inv (Sphinx)
     objects_inv_url = urljoin(base_url, "objects.inv")
     try:
@@ -28,7 +30,7 @@ async def detect_format(base_url: str, client: httpx.AsyncClient) -> Literal["sp
             return "sphinx"
     except Exception:
         pass
-    
+
     # 2. Check for sitemap.xml (MkDocs or other)
     sitemap_url = urljoin(base_url, "sitemap.xml")
     try:
@@ -43,9 +45,6 @@ async def detect_format(base_url: str, client: httpx.AsyncClient) -> Literal["sp
                     return "mkdocs"
     except Exception:
         pass
-    
+
     # 3. Fallback to generic
     return "generic"
-
-
-

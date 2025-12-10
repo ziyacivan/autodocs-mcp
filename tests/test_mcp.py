@@ -1,7 +1,5 @@
 """Tests for MCP server generation module."""
 
-import pytest
-from pathlib import Path
 from autodocs_mcp.mcp import generate_mcp_server
 
 
@@ -10,7 +8,7 @@ def test_generate_mcp_server(tmp_path):
     output_path = tmp_path / "mcp_server.py"
     vector_store_path = tmp_path / "vector_store"
     vector_store_path.mkdir()
-    
+
     generate_mcp_server(
         output_path=str(output_path),
         vector_store_path=str(vector_store_path),
@@ -18,9 +16,9 @@ def test_generate_mcp_server(tmp_path):
         documentation_url="https://docs.example.com/",
         collection_name="documentation",
     )
-    
+
     assert output_path.exists()
-    
+
     # Check that generated file contains expected content
     content = output_path.read_text()
     assert "mcp" in content.lower() or "MCP" in content
