@@ -206,21 +206,6 @@ ruff check --fix src/ tests/
 pre-commit install
 ```
 
-### Testing Package Installation
-
-To test the built package locally:
-
-```bash
-# Build the package
-python -m build
-
-# Install from the built wheel
-pip install dist/autodocs_mcp-*.whl
-
-# Test the CLI command
-autodocs-mcp --help
-```
-
 ## License
 
 MIT License - see LICENSE file for details.
