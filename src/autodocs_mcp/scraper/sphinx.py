@@ -65,3 +65,4 @@ async def scrape_sphinx(base_url: str, client: httpx.AsyncClient) -> List[Dict[s
             }
 
     return list(pages.values())
+

@@ -115,3 +115,4 @@ def extract_title_from_url(url: str) -> str:
         title = parts[-1].replace("-", " ").replace("_", " ").title()
         return title
     return "Home"
+

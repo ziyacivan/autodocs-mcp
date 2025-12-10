@@ -48,3 +48,4 @@ async def detect_format(
 
     # 3. Fallback to generic
     return "generic"
+

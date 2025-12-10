@@ -44,10 +44,18 @@ pip install autodocs-mcp
 
 ## Usage
 
+After installation, you can use `autodocs-mcp` directly from the terminal:
+
 ### Basic Usage
 
 ```bash
 autodocs-mcp generate https://docs.example.com/
+```
+
+Alternatively, you can run it as a Python module:
+
+```bash
+python -m autodocs_mcp generate https://docs.example.com/
 ```
 
 ### Options
@@ -149,10 +157,49 @@ The generated MCP server provides:
 
 ## Development
 
-```bash
-# Install development dependencies
-uv sync --extra dev
+### Local Development Setup
 
+For local development, install the package in editable mode:
+
+```bash
+# Clone the repository
+git clone https://github.com/ziyacivan/autodocs-mcp.git
+cd autodocs-mcp
+
+# Install in editable mode with development dependencies
+pip install -e ".[dev]"
+
+# Or using uv
+uv sync --extra dev
+```
+
+After installation, you can use the CLI tool:
+
+```bash
+# Using the CLI command (after editable install)
+autodocs-mcp --help
+
+# Or as a Python module
+python -m autodocs_mcp --help
+```
+
+### Building the Package
+
+To build the package for distribution:
+
+```bash
+# Install build tools
+pip install build twine
+
+# Build the package
+python -m build
+
+# This creates dist/ directory with wheel and source distribution
+```
+
+### Testing
+
+```bash
 # Run tests
 pytest
 
@@ -170,6 +217,21 @@ ruff check --fix src/ tests/
 
 # Install pre-commit hooks (optional but recommended)
 pre-commit install
+```
+
+### Testing Package Installation
+
+To test the built package locally:
+
+```bash
+# Build the package
+python -m build
+
+# Install from the built wheel
+pip install dist/autodocs_mcp-*.whl
+
+# Test the CLI command
+autodocs-mcp --help
 ```
 
 ## License

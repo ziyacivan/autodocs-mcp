@@ -55,8 +55,9 @@ dev = [
 [project.scripts]
 autodocs-mcp = "autodocs_mcp.cli:main"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.setuptools]
+packages = {find = {where = ["src"]}}
+include-package-data = true
 
 [tool.black]
 line-length = 100
