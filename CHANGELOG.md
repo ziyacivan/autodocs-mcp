@@ -14,6 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI/CD workflows for testing and linting
 - Test infrastructure setup
 
+## [0.1.2] - 2025-01-XX
+
+### Fixed
+- Fixed 429 rate limit handling in format detection - now properly retries with exponential backoff
+- Added user-friendly terminal notifications when rate limits are encountered
+- Improved error handling to prevent "found 0 pages" errors when rate limited
+
+### Improved
+- Added Retry-After header support for rate limit handling
+- Better user feedback during rate limit retries with progress indicators
+
 ## [0.1.1] - 2025-01-XX
 
 ### Fixed
@@ -55,7 +66,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Generated MCP server with search and content retrieval tools
 - VSCode integration support
 
-[Unreleased]: https://github.com/ziyacivan/autodocs-mcp/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/ziyacivan/autodocs-mcp/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/ziyacivan/autodocs-mcp/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/ziyacivan/autodocs-mcp/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ziyacivan/autodocs-mcp/releases/tag/v0.1.0
 
 
