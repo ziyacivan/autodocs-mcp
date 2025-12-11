@@ -1,6 +1,6 @@
 """Wrapper to make curl_cffi compatible with httpx-like interface."""
 
-from typing import Optional, Any
+from typing import Optional
 from curl_cffi.requests import AsyncSession, Response as CurlResponse
 
 
